@@ -1,6 +1,7 @@
 drun
 .npmrc
 .config/
+jest_*/
 
 # Logs
 logs

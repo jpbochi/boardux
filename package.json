@@ -1,0 +1,31 @@
+{
+  "name": "boardux",
+  "version": "0.0.0",
+  "description": "boardgames + redux",
+  "main": "index.js",
+  "engines": {
+    "node": "6.10.2"
+  },
+  "scripts": {
+    "test": "echo 'TODO: write tests'",
+    "lint": "eslint ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jpbochi/boardux.git"
+  },
+  "keywords": [
+    "boardgames",
+    "redux",
+    "rest"
+  ],
+  "author": "JP Bochi",
+  "license": "SEE LICENSE IN LICENSE",
+  "bugs": {
+    "url": "https://github.com/jpbochi/boardux/issues"
+  },
+  "homepage": "https://github.com/jpbochi/boardux#readme",
+  "devDependencies": {
+    "eslint": "^4.3.0"
+  }
+}

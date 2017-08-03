@@ -1,8 +1,12 @@
-const { createStore } = require('redux');
+const _ = require('lodash');
+const { createStore, applyMiddleware } = require('redux');
+const uriTemplates = require('uri-templates');
 
 const nullAction = (state, action) => {
   return state;
 };
+
+const namespace = 'tic-tac-toe';
 
 const initialState = () => (
   {
@@ -19,10 +23,34 @@ const initialState = () => (
   }
 );
 
-exports.new = () => {
-  const store = createStore(nullAction, initialState());
+
+const dropPieceMove = () => {
+  const template = uriTemplates('/drop/{playerid}/{piece}/{position}');
 
   return {
-    state: store.getState
+    test: uri => template.test(uri),
+    action: uri => (
+      {
+        type: `${namespace}:drop`,
+        uri,
+        params: template.fromUri(uri)
+      }
+    )
+  };
+};
+
+const knownMoves = [
+  dropPieceMove()
+];
+
+exports.new = ({ extraMiddleware = [] } = {}) => {
+  const store = createStore(nullAction, initialState(), applyMiddleware(...extraMiddleware));
+
+  return {
+    state: store.getState,
+    move: (uri) => {
+      const move = _.find(knownMoves, move => move.test(uri));
+      store.dispatch(move.action(uri));
+    }
   };
 };

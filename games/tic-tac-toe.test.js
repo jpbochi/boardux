@@ -16,21 +16,26 @@ describe('tic-tac-toe', () => {
     });
   });
 
-  describe('drop piece move', () => {
-    it.skip('adds piece to board and passes turn', () => {
-      const recorder = null; // build one
+  describe('move/drop', () => {
+    it('adds piece to board and passes turn', () => {
+      const actions = [];
+      const recorder = store => next => action => {
+        actions.push(action);
+        return next(action);
+      };
       const game = ttt.new({ extraMiddleware: [recorder] });
 
-      // uri-template: /drop/{playerid}/{piece}/{position}
-      game.play('/drop/player:x/x/b2');
+      game.move('/drop/player:x/x/b2');
 
-      expect(recorder.actions()).eql([
-        '/add/tac/b2',
-        '/cycle-turn',
-        '/tic-tac-toe/score'
+      expect(actions).eql([
+        {
+          type: 'tic-tac-toe:drop',
+          uri: '/drop/player:x/x/b2',
+          params: { piece: 'x', playerid: 'player:x', position: 'b2' }
+        }
       ]);
-    });
 
-    it.skip('passes turn');
+      // TODO: expand move to these actions: '/add/tac/b2', '/cycle-turn', '/tic-tac-toe/score'
+    });
   });
 });

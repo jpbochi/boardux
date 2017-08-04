@@ -25,12 +25,10 @@ const actionBuilders = {
   init: req => ({ type: actions.init }),
   place: req => ({ type: actions.place, params: req.params })
 };
-const reducerByAction = action => _.get(
+const reducerByAction = action => (
   {
     [actions.init]: () => initialState(),
-  },
-  action.type,
-  _.identity
+  }[action.type] || _.identity
 );
 
 module.exports = {

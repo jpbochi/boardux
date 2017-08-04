@@ -5,7 +5,7 @@ const actions = {
   add: `${namespace}:add`,
   passTurn: `${namespace}:pass-turn`
 };
-const reducerByAction = action => _.get(
+const reducerByAction = action => (
   {
     [actions.add]: state => (
       _.merge({}, state, {
@@ -25,19 +25,17 @@ const reducerByAction = action => _.get(
         .head();
       return _.merge({}, state, { currentPlayerId: nextPlayer.id });
     }
-  },
-  action.type,
-  _.identity
+  }[action.type] || _.identity
 );
 
 const core = {
   namespace,
   dependencies: [],
   registerRoutes: router => {
-    router.post('/add/:piece/:position', (req, res, next) => {
+    router.use('/add/:piece/:position', (req, res, next) => {
       res.send({ type: actions.add, params: req.params }).then(res.end, next);
     });
-    router.post('/pass-turn', (req, res, next) => {
+    router.use('/pass-turn', (req, res, next) => {
       res.send({ type: actions.passTurn }).then(res.end, next);
     });
   },

@@ -1,15 +1,6 @@
 const _ = require('lodash');
-const { createStore, applyMiddleware } = require('redux');
-const express = require('express');
+const gameMachine = require('../lib/game-machine');
 const core = require('./core-rules');
-
-const composeReducers = (...reducers) => (
-  _.reduce(
-    reducers,
-    (redPrev, redNext) => (state, action) => redNext(redPrev(state, action), action),
-    _.identity
-  )
-);
 
 const initialState = () => (
   {
@@ -26,16 +17,33 @@ const initialState = () => (
   }
 );
 
+const namespace = 'tic-tac-toe';
+const actions = {
+  init: `${namespace}:init`,
+  place: `${namespace}:place`
+};
+const actionBuilders = {
+  init: req => ({ type: actions.init }),
+  place: req => ({ type: actions.place, params: req.params })
+};
+const reducerByAction = action => _.get(
+  {
+    [actions.init]: () => initialState(),
+  },
+  action.type,
+  _.identity
+);
+
 const game = {
   namespace: 'tic-tac-toe',
   dependencies: [ core.namespace ],
   registerRoutes: (router) => {
+    router.use('/init', (req, res) => {
+      res.send(actionBuilders.init(req));
+    });
     router.use('/place/:piece/:position', (req, res) => {
       const { piece, position } = req.params;
-      res.send({
-        type: `${game.namespace}:place`,
-        params: req.params
-      });
+      res.send(actionBuilders.place(req));
       res.redirect(`/add/${piece}/${position}`);
       res.redirect('/pass-turn');
       res.redirect('/tic-tac-toe/score');
@@ -43,31 +51,9 @@ const game = {
 
     router.use('/tic-tac-toe/score', (req, res) => {});
   },
-  reducer: (state, action) => state
+  reducer: (state, action) => reducerByAction(action)(state)
 };
 
 exports.new = ({ extraMiddleware = [] } = {}) => {
-  const router = express.Router();
-
-  core.registerRoutes(router);
-  game.registerRoutes(router);
-
-  const store = createStore(
-    composeReducers(core.reducer, game.reducer),
-    initialState(),
-    applyMiddleware(...extraMiddleware)
-  );
-  const handle = (url, done = _.identity) => {
-    const req = { method: 'POST', url };
-    const res = {
-      send: action => store.dispatch(_.assign({ url }, action)),
-      redirect: url => handle(url, done)
-    };
-    router.handle(req, res, done);
-  };
-
-  return {
-    state: store.getState,
-    move: (url) => handle(url)
-  };
+  return gameMachine([core, game], { extraMiddleware }).init();
 };

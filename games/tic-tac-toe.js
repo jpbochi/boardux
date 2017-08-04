@@ -23,15 +23,14 @@ const initialState = () => (
   }
 );
 
-
-const dropPieceMove = () => {
-  const template = uriTemplates('/drop/{playerid}/{piece}/{position}');
+const placePieceMove = () => {
+  const template = uriTemplates('/place/{piece}/{position}');
 
   return {
     test: uri => template.test(uri),
     action: uri => (
       {
-        type: `${namespace}:drop`,
+        type: `${namespace}:place`,
         uri,
         params: template.fromUri(uri)
       }
@@ -39,11 +38,10 @@ const dropPieceMove = () => {
   };
 };
 
-const knownMoves = [
-  dropPieceMove()
-];
-
 exports.new = ({ extraMiddleware = [] } = {}) => {
+  const knownMoves = [
+    placePieceMove()
+  ];
   const store = createStore(nullAction, initialState(), applyMiddleware(...extraMiddleware));
 
   return {

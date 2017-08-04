@@ -1,10 +1,14 @@
 module.exports = () => {
-  const actions = [];
+  let actions = [];
 
-  const recorder = store => next => action => {
-    actions.push(action);
-    return next(action);
+  return {
+    reset: () => {
+      actions = [];
+    },
+    actions: () => actions,
+    storeMiddleware: store => next => action => {
+      actions.push(action);
+      return next(action);
+    }
   };
-  recorder.actions = () => actions;
-  return recorder;
 };

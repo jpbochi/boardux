@@ -1,9 +1,13 @@
 const ttt = require('./tic-tac-toe');
+const core = require('./core-rules');
+const gameMachine = require('../lib/game-machine');
 const recorder = require('../support/recorder');
 
 describe('tic-tac-toe', () => {
+  const newGame = (...extra) => gameMachine([core, ttt, ...extra]).init();
+
   it('inits blank board with player:X starting', () => {
-    expect(ttt.new().state()).eql({
+    expect(newGame().state()).eql({
       players: [ 'player:x', 'player:o' ],
       turn: 'player:x',
       board: {
@@ -20,7 +24,7 @@ describe('tic-tac-toe', () => {
   describe('/place', () => {
     it('adds piece to board and passes turn', () => {
       const rec = recorder();
-      const game = ttt.new({ extraMiddleware: [rec] });
+      const game = newGame(rec);
 
       game.move('/place/x/b2');
 

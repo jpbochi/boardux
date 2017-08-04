@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const gameMachine = require('../lib/game-machine');
 const core = require('./core-rules');
 
 const initialState = () => (
@@ -34,7 +33,7 @@ const reducerByAction = action => _.get(
   _.identity
 );
 
-const game = {
+module.exports = {
   namespace: 'tic-tac-toe',
   dependencies: [ core.namespace ],
   registerRoutes: (router) => {
@@ -52,8 +51,4 @@ const game = {
     router.use('/tic-tac-toe/score', (req, res) => {});
   },
   reducer: (state, action) => reducerByAction(action)(state)
-};
-
-exports.new = ({ extraMiddleware = [] } = {}) => {
-  return gameMachine([core, game], { extraMiddleware }).init();
 };

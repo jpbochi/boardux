@@ -8,7 +8,12 @@ drun:
 	chmod +x drun
 
 install: drun
-	${DNODE} yarn --no-progress
+	${DNODE} yarn --no-progress --prefer-offline --silent
+
+install-force: drun
+	${DNODE} yarn --no-progress --check-files
+
+ci: install-force test lint
 
 test: install
 	${DNODE} npm test

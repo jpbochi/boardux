@@ -1,12 +1,15 @@
 const _ = require('lodash');
 const { createStore, applyMiddleware } = require('redux');
-const uriTemplates = require('uri-templates');
+const express = require('express');
+const core = require('./core-rules');
 
-const nullAction = (state, action) => {
-  return state;
-};
-
-const namespace = 'tic-tac-toe';
+const composeReducers = (...reducers) => (
+  _.reduce(
+    reducers,
+    (redPrev, redNext) => (state, action) => redNext(redPrev(state, action), action),
+    _.identity
+  )
+);
 
 const initialState = () => (
   {
@@ -23,32 +26,48 @@ const initialState = () => (
   }
 );
 
-const placePieceMove = () => {
-  const template = uriTemplates('/place/{piece}/{position}');
+const game = {
+  namespace: 'tic-tac-toe',
+  dependencies: [ core.namespace ],
+  registerRoutes: (router) => {
+    router.use('/place/:piece/:position', (req, res) => {
+      const { piece, position } = req.params;
+      res.send({
+        type: `${game.namespace}:place`,
+        params: req.params
+      });
+      res.redirect(`/add/${piece}/${position}`);
+      res.redirect('/pass-turn');
+      res.redirect('/tic-tac-toe/score');
+    });
 
-  return {
-    test: uri => template.test(uri),
-    action: uri => (
-      {
-        type: `${namespace}:place`,
-        uri,
-        params: template.fromUri(uri)
-      }
-    )
-  };
+    router.use('/tic-tac-toe/score', (req, res) => {});
+  },
+  reducer: (state, action) => state
 };
 
 exports.new = ({ extraMiddleware = [] } = {}) => {
-  const knownMoves = [
-    placePieceMove()
-  ];
-  const store = createStore(nullAction, initialState(), applyMiddleware(...extraMiddleware));
+  const router = express.Router();
+
+  core.registerRoutes(router);
+  game.registerRoutes(router);
+
+  const store = createStore(
+    composeReducers(core.reducer, game.reducer),
+    initialState(),
+    applyMiddleware(...extraMiddleware)
+  );
+  const handle = (url, done = _.identity) => {
+    const req = { method: 'POST', url };
+    const res = {
+      send: action => store.dispatch(_.assign({ url }, action)),
+      redirect: url => handle(url, done)
+    };
+    router.handle(req, res, done);
+  };
 
   return {
     state: store.getState,
-    move: (uri) => {
-      const move = _.find(knownMoves, move => move.test(uri));
-      store.dispatch(move.action(uri));
-    }
+    move: (url) => handle(url)
   };
 };

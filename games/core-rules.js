@@ -18,8 +18,11 @@ const reducerByAction = action => _.get(
       const { players, currentPlayerId } = state;
 
       const nextPlayer = _(players)
+        .concat(players)
         .dropWhile(player => player.id != currentPlayerId)
-        .nth(1);
+        .drop()
+        .dropWhile(player => player.finalScore)
+        .head();
       return _.merge({}, state, { currentPlayerId: nextPlayer.id });
     }
   },

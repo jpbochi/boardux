@@ -46,8 +46,7 @@ module.exports = {
         .then(() => res.redirect('/tic-tac-toe/score'))
         .then(res.end, next);
     });
-
-    router.use('/tic-tac-toe/score', (req, res, next) => next());
+    router.use('/tic-tac-toe/score', (req, res, next) => res.end());
   },
   reducer: (state, action) => reducerByAction(action)(state)
 };

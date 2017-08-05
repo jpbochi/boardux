@@ -33,6 +33,7 @@
   "dependencies": {
     "express": "^4.15.3",
     "lodash": "^4.17.4",
-    "redux": "^3.7.2"
+    "redux": "^3.7.2",
+    "verror": "^1.10.0"
   }
 }

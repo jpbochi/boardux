@@ -44,4 +44,23 @@ describe('core-rules', () => {
       });
     });
   });
+
+  describe('/set-final-score/:player/:score', () => {
+    it('sets final score', () => {
+      return newGame({
+        players: [
+          { id: 'player:one' }, { id: 'player:two' }
+        ]
+      }).then(game => (
+        game.move('/set-final-score/player:one/rage-quit')
+      )).then(game => {
+        expect(game.state()).eql({
+          players: [
+            { id: 'player:one', finalScore: 'rage-quit' },
+            { id: 'player:two' }
+          ]
+        });
+      });
+    });
+  });
 });

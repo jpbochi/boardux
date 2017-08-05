@@ -35,18 +35,18 @@ module.exports = {
   namespace: 'tic-tac-toe',
   dependencies: [ core.namespace ],
   registerRoutes: router => {
-    router.use('/init', (req, res, next) => {
-      res.send(actionBuilders.init(req)).then(res.end, next);
+    router.use('/init', (req, res) => {
+      res.send(actionBuilders.init(req)).then(res.end, res.next);
     });
-    router.use('/place/:piece/:position', (req, res, next) => {
+    router.use('/place/:piece/:position', (req, res) => {
       const { piece, position } = req.params;
       res.send(actionBuilders.place(req))
         .then(() => res.redirect(`/add/${piece}/${position}`))
         .then(() => res.redirect('/pass-turn'))
-        .then(() => res.redirect('/tic-tac-toe/score'))
-        .then(res.end, next);
+        .then(() => res.redirect('/score'))
+        .then(res.end, res.next);
     });
-    router.use('/tic-tac-toe/score', (req, res, next) => res.end());
+    router.use('/score', (req, res) => res.end());
   },
   reducer: (state, action) => reducerByAction(action)(state)
 };

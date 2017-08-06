@@ -32,6 +32,18 @@ describe('tic-tac-toe', () => {
         expect(moves).eql([]);
       });
     });
+
+    it('lists 9 moves for initial player', () => {
+      return newGame().then(game => (
+        game.get('/moves', game.userForPlayer('player:x'))
+      )).then(moves => {
+        expect(moves).eql([
+          '/move/place/x/a1', '/move/place/x/a2', '/move/place/x/a3',
+          '/move/place/x/b1', '/move/place/x/b2', '/move/place/x/b3',
+          '/move/place/x/c1', '/move/place/x/c2', '/move/place/x/c3'
+        ]);
+      });
+    });
   });
 
   describe('/move/place', () => {

@@ -22,6 +22,11 @@ const initialState = () => normalize(
   }
 );
 
+const blueprintPieceIdFromPlayerId = {
+  ['player:x']: 'x',
+  ['player:o']: 'o'
+};
+
 const namespace = 'tic-tac-toe';
 const initAction = {
   type: `${namespace}:init`,
@@ -32,6 +37,7 @@ const initAction = {
 };
 const placeAction = {
   type: `${namespace}:place`,
+  link: ({ piece, position }) => `/move/place/${piece}/${position}`,
   addRoutes: router => {
     router.post('/move/place/:piece/:position', ensureEnd((req, res) => {
       const { piece, position } = req.params;
@@ -62,19 +68,18 @@ module.exports = {
     router.route('/moves')
       .all(requireAuthentication)
       .get(ensureEnd((req, res) => {
-        // if (!playsAsCurrentPlayer(req)) { return res.send([]); }
-        // const { user } = req;
-        // const { currentPlayerId, board } = req.state();
+        const { user } = req;
+        const state = req.state();
+        const currentPlayer = state.currentPlayerId();
 
-        // const placeablePiece = board.
-        // var currentPlayerId = state.CurrentPlayerId;
-        // var pieceClass = state.Board.Pieces.ById(TicTacToePlayer.Piece[currentPlayerId]);
-        // return state.Board
-        // .Region(Tiles.MainBoard)
-        // .Where(p => state.Board.PiecesAt(p).IsEmpty())
-        // .Select(p => GetTicTacToeMove(currentPlayerId, pieceClass.Class, p))
-        // .Select(m => m.Link)
-        return res.send([]);
+        if (!user.canPlayAs(currentPlayer)) { return res.send([]); }
+
+        const piece = blueprintPieceIdFromPlayerId[currentPlayer];
+        return res.send(
+          state.tiles()
+            // TODO: filter occupied tiles
+            .map(position => placeAction.link({ piece, position }))
+        );
       }));
 
     router.all('/move/*', requireCurrentPlayer);

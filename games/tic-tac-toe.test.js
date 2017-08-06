@@ -1,4 +1,3 @@
-const _ = require('lodash');
 const ttt = require('./tic-tac-toe');
 const core = require('./core-rules');
 const gameMachine = require('../lib/game-machine');

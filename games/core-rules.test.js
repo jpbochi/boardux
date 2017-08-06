@@ -45,6 +45,29 @@ describe('core-rules', () => {
     });
   });
 
+  describe('/add/:piece/:position', () => {
+    it('copies a blueprint piece into specified position', () => {
+      return newGame({
+        board: {
+          tiles: [ 'a1', 'a2', 'b1', 'b2' ],
+          pieces: [ { id: 'stone', color: 'white' } ]
+        }
+      }).then(game => (
+        game.move('/add/stone/a2')
+      )).then(game => {
+        expect(game.state().denormalized()).eql({
+          board: {
+            tiles: [ 'a1', 'a2', 'b1', 'b2' ],
+            pieces: [
+              { id: 'stone', color: 'white' },
+              { id: 'a2', color: 'white' }
+            ]
+          }
+        });
+      });
+    });
+  });
+
   describe('/set-final-score/:player/:score', () => {
     it('sets final score', () => {
       return newGame({

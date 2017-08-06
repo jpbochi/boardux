@@ -4,11 +4,9 @@ const { normalize } = require('../lib/game-state');
 
 const initialState = () => normalize(
   {
-    id: 'main',
     players: [ { id: 'player:x' }, { id: 'player:o' } ],
     currentPlayer: 'player:x',
     board: {
-      id: 'main',
       tiles: [
         'a1', 'a2', 'a3',
         'b1', 'b2', 'b3',

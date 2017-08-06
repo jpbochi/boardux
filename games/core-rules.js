@@ -26,9 +26,15 @@ const addPieceAction = {
   addRoutes: router => {
     router.post('/add/:piece/:position', ensureEnd(execute(addPieceAction)));
   },
-  reducer: (state, action) => (
-    state // TODO: copy a blueprint piece into the board
-  )
+  reducer: (raw, action) => {
+    const { piece, position } = action.params;
+    const state = gameState(raw);
+    const blueprint = state.piece(piece).set('id', position);
+    return state.updateEntities(en =>
+      en.setIn(['pieces', blueprint.id], blueprint)
+        .updateIn(['boards', 'main', 'pieces'], pieces => [...pieces, blueprint.id])
+    );
+  }
 };
 const setFinalScoreAction = {
   type: `${namespace}:set-final-score`,

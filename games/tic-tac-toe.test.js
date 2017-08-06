@@ -23,14 +23,18 @@ describe('tic-tac-toe', () => {
     });
   });
 
+  describe('GET /moves', () => {
+    it('rejects not authenticated user', () => {
+      return newGame().then(game => (
+        expect(game.get('/moves')).rejected(err => expect(err.toString()).match(/^Unauthorized/))
+      ));
+    });
+  });
+
   describe('/place', () => {
     it('rejects not authenticated user', () => {
       return newGame().then(game => (
-        expect(
-          game.move('/place/x/b2')
-        ).rejected(err => {
-          expect(err.name).eql('Unauthorized');
-        })
+        expect(game.move('/place/x/b2')).rejected(err => expect(err.toString()).match(/^Unauthorized/))
       ));
     });
 
@@ -38,9 +42,7 @@ describe('tic-tac-toe', () => {
       return newGame().then(game => (
         expect(
           game.move('/place/x/b2', game.userForPlayer('player:o'))
-        ).rejected(err => {
-          expect(err.name).eql('Forbidden');
-        })
+        ).rejected(err => expect(err.toString()).match(/^Forbidden/))
       ));
     });
 

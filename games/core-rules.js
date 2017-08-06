@@ -10,6 +10,7 @@ const cycleTurnAction = {
     router.post('/cycle-turn', ensureEnd(execute(cycleTurnAction)));
   },
   reducer: (raw, action) => {
+    // TODO: beware that normalization can erase the player order. Somehow, tests still passing
     const state = gameState(raw);
     const nextPlayer = _(state.players())
       .concat(state.players())
@@ -17,7 +18,7 @@ const cycleTurnAction = {
       .drop()
       .dropWhile(player => player.finalScore)
       .head();
-    return _.merge({}, raw, { result: { currentPlayer: nextPlayer.id } });
+    return state.updateGame(game => game.set('currentPlayer', nextPlayer.id));
   }
 };
 const addPieceAction = {
@@ -27,7 +28,6 @@ const addPieceAction = {
   },
   reducer: (state, action) => (
     state // TODO: copy a blueprint piece into the board
-    // _.merge({}, state, { boards: { main: { pieces: _.concat(state.board.pieces, action.params) }} })
   )
 };
 const setFinalScoreAction = {
@@ -35,9 +35,9 @@ const setFinalScoreAction = {
   addRoutes: router => {
     router.post('/set-final-score/:player/:score', ensureEnd(execute(setFinalScoreAction)));
   },
-  reducer: (raw, action) => {
+  reducer: (state, action) => {
     const { player, score } = action.params;
-    return _.merge({}, raw, { entities: { players: { [player]: { finalScore: score } } } });
+    return gameState(state).updatePlayer(player, p => p.set('finalScore', score));
   }
 };
 

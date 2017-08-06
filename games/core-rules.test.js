@@ -4,7 +4,7 @@ const gameMachine = require('../lib/game-machine');
 describe('core-rules', () => {
   const newGame = (state, ...extra) => Promise.resolve(gameMachine([core, ...extra], state));
 
-  describe('/cycle-turn', () => { // TODO: beware that normalization can erase the player order. Somehow, tests still pass
+  describe('/cycle-turn', () => {
     it('passes turn from second to third', () => {
       return newGame({
         players: [

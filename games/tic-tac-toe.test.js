@@ -10,8 +10,8 @@ describe('tic-tac-toe', () => {
   it('inits blank board with player:X starting', () => {
     return newGame().then(game => {
       expect(game.state()).eql({
-        players: [ 'player:x', 'player:o' ],
-        turn: 'player:x',
+        players: [ { id: 'player:x' }, { id: 'player:o' } ],
+        currentPlayerId: 'player:x',
         board: {
           tiles: [
             'a1', 'a2', 'a3',
@@ -37,12 +37,12 @@ describe('tic-tac-toe', () => {
           'POST /cycle-turn',
           'POST /score'
         ]);
-        expect(rec.mapActions(req => _.pick(req, ['type', 'params']))).eql([
-          { type: 'tic-tac-toe:init', params: {} },
-          { type: 'tic-tac-toe:place', params: { piece: 'x', position: 'b2' } },
-          { type: 'core:add', params: { piece: 'x', position: 'b2' } },
-          { type: 'core:cycle-turn', params: {} },
-          { type: 'tic-tac-toe:score', params: {} }
+        expect(rec.actions()).eql([
+          ['tic-tac-toe:init', {}],
+          ['tic-tac-toe:place', { piece: 'x', position: 'b2' }],
+          ['core:add', { piece: 'x', position: 'b2' }],
+          ['core:cycle-turn', {}],
+          ['tic-tac-toe:score', {}]
         ]);
       });
     });

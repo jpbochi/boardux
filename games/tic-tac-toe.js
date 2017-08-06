@@ -3,8 +3,8 @@ const { sendAction, ensureEndResponse } = require('../lib/utils');
 
 const initialState = () => (
   {
-    players: [ 'player:x', 'player:o' ],
-    turn: 'player:x',
+    players: [ { id: 'player:x' }, { id: 'player:o' } ],
+    currentPlayerId: 'player:x',
     board: {
       tiles: [
         'a1', 'a2', 'a3',
@@ -29,7 +29,7 @@ const placeAction = {
   addRoutes: router => {
     router.use('/place/:piece/:position', ensureEndResponse((req, res) => {
       const { piece, position } = req.params;
-      return sendAction(placeAction)(req, res)
+      return res.send(req.toAction(placeAction))
         .then(() => res.redirect(`/add/${piece}/${position}`))
         .then(() => res.redirect('/cycle-turn'))
         .then(() => res.redirect('/score'));

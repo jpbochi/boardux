@@ -11,6 +11,7 @@ module.exports = () => {
     },
     mapActions: (iteratee) => _.map(actions, iteratee),
     mapRequests: (iteratee) => _.map(requests, iteratee),
+    actions: () => mod.mapActions(action => [action.type, action.params]),
     requests: () => mod.mapRequests(req => `${req.method} ${req.url}`),
     storeMiddleware: store => next => action => {
       actions.push(action);

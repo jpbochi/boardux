@@ -1,5 +1,5 @@
 const core = require('./core-rules');
-const { sendAction, ensureEndResponse } = require('../lib/utils');
+const { requireCurrentPlayer, sendAction, ensureEndResponse } = require('../lib/utils');
 
 const initialState = () => (
   {
@@ -27,13 +27,16 @@ const initAction = {
 const placeAction = {
   type: `${namespace}:place`,
   addRoutes: router => {
-    router.use('/place/:piece/:position', ensureEndResponse((req, res) => {
-      const { piece, position } = req.params;
-      return res.send(req.toAction(placeAction))
-        .then(() => res.redirect(`/add/${piece}/${position}`))
-        .then(() => res.redirect('/cycle-turn'))
-        .then(() => res.redirect('/score'));
-    }));
+    router.use('/place/:piece/:position',
+      requireCurrentPlayer,
+      ensureEndResponse((req, res) => {
+        const { piece, position } = req.params;
+        return res.send(req.toAction(placeAction))
+          .then(() => res.redirect(`/add/${piece}/${position}`))
+          .then(() => res.redirect('/cycle-turn'))
+          .then(() => res.redirect('/score'));
+      })
+    );
   }
 };
 const scoreAction = {

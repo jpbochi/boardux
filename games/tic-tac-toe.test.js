@@ -24,14 +24,34 @@ describe('tic-tac-toe', () => {
   });
 
   describe('/place', () => {
+    it('rejects not authenticated user', () => {
+      return newGame().then(game => (
+        expect(
+          game.move('/place/x/b2')
+        ).rejected(err => {
+          expect(err.name).eql('Unauthorized');
+        })
+      ));
+    });
+
+    it('rejects not current player', () => {
+      return newGame().then(game => (
+        expect(
+          game.move('/place/x/b2', game.userForPlayer('player:o'))
+        ).rejected(err => {
+          expect(err.name).eql('Forbidden');
+        })
+      ));
+    });
+
     it('adds piece to board and cycles turn', () => {
       const rec = recorder();
       return newGame(rec).then(game => (
-        game.move('/place/x/b2')
+        game.move('/place/x/b2', game.userForPlayer('player:x'))
       )).then(game => {
         expect(rec.requests()).eql([
           'POST /init',
-          'POST /place/x/b2',
+          'POST /place/x/b2 [user: `player:x`]',
           'POST /add/x/b2',
           'POST /cycle-turn',
           'POST /score'

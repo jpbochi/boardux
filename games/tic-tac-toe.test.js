@@ -1,10 +1,11 @@
+const _ = require('lodash');
 const ttt = require('./tic-tac-toe');
 const core = require('./core-rules');
 const gameMachine = require('../lib/game-machine');
 const recorder = require('../support/recorder');
 
 describe('tic-tac-toe', () => {
-  const newGame = (...extra) => gameMachine([core, ttt, ...extra]).init();
+  const newGame = (...extra) => gameMachine([...extra, core, ttt]).init();
 
   it('inits blank board with player:X starting', () => {
     return newGame().then(game => {
@@ -29,12 +30,19 @@ describe('tic-tac-toe', () => {
       return newGame(rec).then(game => (
         game.move('/place/x/b2')
       )).then(game => {
-        expect(rec.actions()).eql([
-          { type: 'tic-tac-toe:init', url: '/init', params: {} },
-          { type: 'tic-tac-toe:place', url: '/place/x/b2', params: { piece: 'x', position: 'b2' } },
-          { type: 'core:add', url: '/add/x/b2', params: { piece: 'x', position: 'b2' } },
-          { type: 'core:cycle-turn', url: '/cycle-turn', params: {} },
-          { type: 'tic-tac-toe:score', url: '/score', params: {} }
+        expect(rec.requests()).eql([
+          'POST /init',
+          'POST /place/x/b2',
+          'POST /add/x/b2',
+          'POST /cycle-turn',
+          'POST /score'
+        ]);
+        expect(rec.mapActions(req => _.pick(req, ['type', 'params']))).eql([
+          { type: 'tic-tac-toe:init', params: {} },
+          { type: 'tic-tac-toe:place', params: { piece: 'x', position: 'b2' } },
+          { type: 'core:add', params: { piece: 'x', position: 'b2' } },
+          { type: 'core:cycle-turn', params: {} },
+          { type: 'tic-tac-toe:score', params: {} }
         ]);
       });
     });

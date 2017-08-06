@@ -13,11 +13,14 @@
 
 ### games & extensions
 
-- [ ] resign extension
+- [ ] resign move
+- [ ] draw offer
 - [ ] a partial information game like Stratego
 - [ ] a stochastic game (ie, has dice of other random factors): Backgammon
 - [ ] a cooperative or team game
+- [ ] Chess and some Chess variant (see https://en.wikipedia.org/wiki/List_of_chess_variants)
 - [ ] Scrabble: partial info and stochastic (letters are picked randomly)
+- [ ] standard game state formats like [X-FEN](https://en.wikipedia.org/wiki/X-FEN)
 
 ### tic-tac-toe
 

@@ -20,31 +20,33 @@ const namespace = 'tic-tac-toe';
 const initAction = {
   type: `${namespace}:init`,
   addRoutes: router => {
-    router.use('/init', ensureEnd(execute(initAction)));
+    router.post('/init', ensureEnd(execute(initAction)));
   },
   reducer: initialState
 };
 const placeAction = {
   type: `${namespace}:place`,
   addRoutes: router => {
-    router.get('/moves', requireAuthentication);
+    router.route('/moves')
+      .all(requireAuthentication)
+      .get(ensureEnd((req, res) => {
+        return res.send([]);
+      }));
 
-    router.use('/place/:piece/:position',
-      requireCurrentPlayer,
-      ensureEnd((req, res) => {
-        const { piece, position } = req.params;
-        return res.execute(req.toAction(placeAction))
-          .then(() => res.routeMove(`/add/${piece}/${position}`))
-          .then(() => res.routeMove('/cycle-turn'))
-          .then(() => res.routeMove('/score'));
-      })
-    );
+    router.all('/move/*', requireCurrentPlayer);
+    router.post('/move/place/:piece/:position', ensureEnd((req, res) => {
+      const { piece, position } = req.params;
+      return res.execute(req.toAction(placeAction))
+        .then(() => res.routeMove(`/add/${piece}/${position}`))
+        .then(() => res.routeMove('/cycle-turn'))
+        .then(() => res.routeMove('/score'));
+    }));
   }
 };
 const scoreAction = {
   type: `${namespace}:score`,
   addRoutes: router => {
-    router.use('/score', ensureEnd(execute(scoreAction)));
+    router.post('/score', ensureEnd(execute(scoreAction)));
   }
 };
 

@@ -6,7 +6,7 @@ const namespace = 'core';
 const cycleTurnAction = {
   type: `${namespace}:cycle-turn`,
   addRoutes: router => {
-    router.use('/cycle-turn', ensureEnd(execute(cycleTurnAction)));
+    router.post('/cycle-turn', ensureEnd(execute(cycleTurnAction)));
   },
   reducer: (state, action) => {
     const { players, currentPlayerId } = state;
@@ -23,7 +23,7 @@ const cycleTurnAction = {
 const addPieceAction = {
   type: `${namespace}:add`,
   addRoutes: router => {
-    router.use('/add/:piece/:position', ensureEnd(execute(addPieceAction)));
+    router.post('/add/:piece/:position', ensureEnd(execute(addPieceAction)));
   },
   reducer: (state, action) => (
     _.merge({}, state, {
@@ -36,7 +36,7 @@ const addPieceAction = {
 const setFinalScoreAction = {
   type: `${namespace}:set-final-score`,
   addRoutes: router => {
-    router.use('/set-final-score/:player/:score', ensureEnd(execute(setFinalScoreAction)));
+    router.post('/set-final-score/:player/:score', ensureEnd(execute(setFinalScoreAction)));
   },
   reducer: (state, action) => {
     const { player, score } = action.params;

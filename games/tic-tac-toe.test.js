@@ -29,19 +29,27 @@ describe('tic-tac-toe', () => {
         expect(game.get('/moves')).rejected(err => expect(err.toString()).match(/^Unauthorized/))
       ));
     });
+
+    it('lists no moves for not current player', () => {
+      return newGame().then(game => (
+        game.get('/moves', game.userForPlayer('player:o'))
+      )).then(moves => {
+        expect(moves).eql([]);
+      });
+    });
   });
 
-  describe('/place', () => {
+  describe('/move/place', () => {
     it('rejects not authenticated user', () => {
       return newGame().then(game => (
-        expect(game.move('/place/x/b2')).rejected(err => expect(err.toString()).match(/^Unauthorized/))
+        expect(game.move('/move/place/x/b2')).rejected(err => expect(err.toString()).match(/^Unauthorized/))
       ));
     });
 
     it('rejects not current player', () => {
       return newGame().then(game => (
         expect(
-          game.move('/place/x/b2', game.userForPlayer('player:o'))
+          game.move('/move/place/x/b2', game.userForPlayer('player:o'))
         ).rejected(err => expect(err.toString()).match(/^Forbidden/))
       ));
     });
@@ -49,11 +57,11 @@ describe('tic-tac-toe', () => {
     it('adds piece to board and cycles turn', () => {
       const rec = recorder();
       return newGame(rec).then(game => (
-        game.move('/place/x/b2', game.userForPlayer('player:x'))
+        game.move('/move/place/x/b2', game.userForPlayer('player:x'))
       )).then(game => {
         expect(rec.requests()).eql([
           'POST /init',
-          'POST /place/x/b2 [user: `player:x`]',
+          'POST /move/place/x/b2 [user: `player:x`]',
           'POST /add/x/b2',
           'POST /cycle-turn',
           'POST /score'

@@ -1,5 +1,5 @@
 const core = require('./core-rules');
-const { requireCurrentPlayer, sendAction, ensureEndResponse } = require('../lib/utils');
+const { requireCurrentPlayer, execute, ensureEnd } = require('../lib/route-utils');
 
 const initialState = () => (
   {
@@ -20,7 +20,7 @@ const namespace = 'tic-tac-toe';
 const initAction = {
   type: `${namespace}:init`,
   addRoutes: router => {
-    router.use('/init', ensureEndResponse(sendAction(initAction)));
+    router.use('/init', ensureEnd(execute(initAction)));
   },
   reducer: initialState
 };
@@ -29,12 +29,12 @@ const placeAction = {
   addRoutes: router => {
     router.use('/place/:piece/:position',
       requireCurrentPlayer,
-      ensureEndResponse((req, res) => {
+      ensureEnd((req, res) => {
         const { piece, position } = req.params;
-        return res.send(req.toAction(placeAction))
-          .then(() => res.redirect(`/add/${piece}/${position}`))
-          .then(() => res.redirect('/cycle-turn'))
-          .then(() => res.redirect('/score'));
+        return res.execute(req.toAction(placeAction))
+          .then(() => res.subroute(`/add/${piece}/${position}`))
+          .then(() => res.subroute('/cycle-turn'))
+          .then(() => res.subroute('/score'));
       })
     );
   }
@@ -42,7 +42,7 @@ const placeAction = {
 const scoreAction = {
   type: `${namespace}:score`,
   addRoutes: router => {
-    router.use('/score', ensureEndResponse(sendAction(scoreAction)));
+    router.use('/score', ensureEnd(execute(scoreAction)));
   }
 };
 

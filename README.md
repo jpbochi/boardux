@@ -10,6 +10,7 @@
 - [ ] introduce referee concept (_authorises_ moves and _lists_ available moves)
 - [ ] GET view of the game for a given player
 - [ ] include available moves in game view
+- [ ] ensure every single move is properly authorised
 
 ### games & extensions
 
@@ -26,4 +27,6 @@
 
 - [ ] list available moves
 - [ ] authorise moves
-- [ ] implement /score
+- [ ] reject /place/invalid-piece/a1
+- [ ] reject /place/x/invalid-position
+- [ ] /score

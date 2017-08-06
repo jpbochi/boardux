@@ -1,7 +1,11 @@
 
 const chai = require('chai');
+// const sinon = require('sinon');
 
 global.expect = chai.expect;
+
+// chai.use(require('sinon-chai'));
+// chai.use(require('chai-shallow-deep-equal'));
 
 chai.Assertion.addMethod('rejected', function fn(errorHandler) {
   const promise = this._obj;

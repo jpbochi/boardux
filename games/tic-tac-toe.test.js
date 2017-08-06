@@ -30,10 +30,11 @@ describe('tic-tac-toe', () => {
         game.move('/place/x/b2')
       )).then(game => {
         expect(rec.actions()).eql([
-          { type: 'tic-tac-toe:init', url: '/init' },
+          { type: 'tic-tac-toe:init', url: '/init', params: {} },
           { type: 'tic-tac-toe:place', url: '/place/x/b2', params: { piece: 'x', position: 'b2' } },
           { type: 'core:add', url: '/add/x/b2', params: { piece: 'x', position: 'b2' } },
-          { type: 'core:pass-turn', url: '/pass-turn', params: {} }
+          { type: 'core:pass-turn', url: '/pass-turn', params: {} },
+          { type: 'tic-tac-toe:score', url: '/score', params: {} }
         ]);
       });
     });

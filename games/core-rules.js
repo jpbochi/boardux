@@ -1,17 +1,12 @@
 const _ = require('lodash');
+const { sendAction, ensureEndResponse } = require('../lib/utils');
 
 const namespace = 'core';
-const routeAsSendAction = action => (req, res) => (
-  res.send({ type: action.type, params: req.params })
-);
-const ensureEndResponse = fn => (req, res) => {
-  fn(req, res).then(res.end, res.next);
-};
 
 const passTurnAction = {
   type: `${namespace}:pass-turn`,
-  registerRoutes: router => {
-    router.use('/pass-turn', ensureEndResponse(routeAsSendAction(passTurnAction)));
+  addRoutes: router => {
+    router.use('/pass-turn', ensureEndResponse(sendAction(passTurnAction)));
   },
   reducer: (state, action) => {
     const { players, currentPlayerId } = state;
@@ -27,8 +22,8 @@ const passTurnAction = {
 };
 const addPieceAction = {
   type: `${namespace}:add`,
-  registerRoutes: router => {
-    router.use('/add/:piece/:position', ensureEndResponse(routeAsSendAction(addPieceAction)));
+  addRoutes: router => {
+    router.use('/add/:piece/:position', ensureEndResponse(sendAction(addPieceAction)));
   },
   reducer: (state, action) => (
     _.merge({}, state, {
@@ -40,8 +35,8 @@ const addPieceAction = {
 };
 const setFinalScoreAction = {
   type: `${namespace}:set-final-score`,
-  registerRoutes: router => {
-    router.use('/set-final-score/:player/:score', ensureEndResponse(routeAsSendAction(setFinalScoreAction)));
+  addRoutes: router => {
+    router.use('/set-final-score/:player/:score', ensureEndResponse(sendAction(setFinalScoreAction)));
   },
   reducer: (state, action) => {
     const { player, score } = action.params;

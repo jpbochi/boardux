@@ -1,5 +1,5 @@
-const _ = require('lodash');
 const core = require('./core-rules');
+const { sendAction, ensureEndResponse } = require('../lib/utils');
 
 const initialState = () => (
   {
@@ -17,36 +17,38 @@ const initialState = () => (
 );
 
 const namespace = 'tic-tac-toe';
-const actions = {
-  init: `${namespace}:init`,
-  place: `${namespace}:place`
+const initAction = {
+  type: `${namespace}:init`,
+  addRoutes: router => {
+    router.use('/init', ensureEndResponse(sendAction(initAction)));
+  },
+  reducer: initialState
 };
-const actionBuilders = {
-  init: req => ({ type: actions.init }),
-  place: req => ({ type: actions.place, params: req.params })
-};
-const reducerByAction = action => (
-  {
-    [actions.init]: () => initialState(),
-  }[action.type] || _.identity
-);
-
-module.exports = {
-  namespace: 'tic-tac-toe',
-  dependencies: [ core.namespace ],
-  registerRoutes: router => {
-    router.use('/init', (req, res) => {
-      res.send(actionBuilders.init(req)).then(res.end, res.next);
-    });
-    router.use('/place/:piece/:position', (req, res) => {
+const placeAction = {
+  type: `${namespace}:place`,
+  addRoutes: router => {
+    router.use('/place/:piece/:position', ensureEndResponse((req, res) => {
       const { piece, position } = req.params;
-      res.send(actionBuilders.place(req))
+      return sendAction(placeAction)(req, res)
         .then(() => res.redirect(`/add/${piece}/${position}`))
         .then(() => res.redirect('/pass-turn'))
-        .then(() => res.redirect('/score'))
-        .then(res.end, res.next);
-    });
-    router.use('/score', (req, res) => res.end());
-  },
-  reducer: (state, action) => reducerByAction(action)(state)
+        .then(() => res.redirect('/score'));
+    }));
+  }
+};
+const scoreAction = {
+  type: `${namespace}:score`,
+  addRoutes: router => {
+    router.use('/score', ensureEndResponse(sendAction(scoreAction)));
+  }
+};
+
+module.exports = {
+  namespace,
+  dependencies: [ core.namespace ],
+  actions: [
+    initAction,
+    placeAction,
+    scoreAction
+  ]
 };

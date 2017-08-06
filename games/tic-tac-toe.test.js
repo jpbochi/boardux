@@ -44,6 +44,20 @@ describe('tic-tac-toe', () => {
         ]);
       });
     });
+
+    it('lists 8 moves for second player after an initial move', () => {
+      return newGame().then(game => (
+        game.move('/move/place/x/b2', game.userForPlayer('player:x'))
+      )).then(game => (
+        game.get('/moves', game.userForPlayer('player:o'))
+      )).then(moves => {
+        expect(moves).eql([
+          '/move/place/o/a1', '/move/place/o/a2', '/move/place/o/a3',
+          '/move/place/o/b1', '/move/place/o/b3',
+          '/move/place/o/c1', '/move/place/o/c2', '/move/place/o/c3'
+        ]);
+      });
+    });
   });
 
   describe('/move/place', () => {

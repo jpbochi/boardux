@@ -75,7 +75,7 @@ module.exports = {
         const piece = blueprintPieceIdFromPlayerId[currentPlayer];
         return res.send(
           state.tiles()
-            // TODO: filter occupied tiles
+            .filter(position => !state.piece(position))
             .map(position => placeAction.link({ piece, position }))
         );
       }));

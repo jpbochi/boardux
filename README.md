@@ -6,8 +6,8 @@
 
 ### engine
 
-- [ ] include player in the move requests and `referee` in the action requests
 - [ ] introduce referee concept (_authorises_ moves and _lists_ available moves)
+- [ ] allow for multiple referees to handle GET /moves and each one add their own move links
 - [ ] GET view of the game for a given player
 - [ ] include available moves in game view
 - [ ] ensure every single move is properly authorised
@@ -25,8 +25,8 @@
 
 ### tic-tac-toe
 
-- [ ] list available moves
-- [ ] authorise moves
+- [x] list available moves
+- [x] authorise moves
 - [ ] reject /place/invalid-piece/a1
 - [ ] reject /place/x/invalid-position
 - [ ] /score

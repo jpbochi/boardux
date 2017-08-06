@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const { execute, ensureEnd } = require('../lib/route-utils');
+const gameState = require('../lib/game-state');
 
 const namespace = 'core';
 
@@ -8,16 +9,15 @@ const cycleTurnAction = {
   addRoutes: router => {
     router.post('/cycle-turn', ensureEnd(execute(cycleTurnAction)));
   },
-  reducer: (state, action) => {
-    const { players, currentPlayerId } = state;
-
-    const nextPlayer = _(players)
-      .concat(players)
-      .dropWhile(player => player.id != currentPlayerId)
+  reducer: (raw, action) => {
+    const state = gameState(raw);
+    const nextPlayer = _(state.players())
+      .concat(state.players())
+      .dropWhile(player => player.id != state.currentPlayerId())
       .drop()
       .dropWhile(player => player.finalScore)
       .head();
-    return _.merge({}, state, { currentPlayerId: nextPlayer.id });
+    return _.merge({}, raw, { result: { currentPlayer: nextPlayer.id } });
   }
 };
 const addPieceAction = {
@@ -26,11 +26,8 @@ const addPieceAction = {
     router.post('/add/:piece/:position', ensureEnd(execute(addPieceAction)));
   },
   reducer: (state, action) => (
-    _.merge({}, state, {
-      board: {
-        pieces: _.concat(state.board.pieces, action.params)
-      }
-    })
+    state // TODO: copy a blueprint piece into the board
+    // _.merge({}, state, { boards: { main: { pieces: _.concat(state.board.pieces, action.params) }} })
   )
 };
 const setFinalScoreAction = {
@@ -38,14 +35,9 @@ const setFinalScoreAction = {
   addRoutes: router => {
     router.post('/set-final-score/:player/:score', ensureEnd(execute(setFinalScoreAction)));
   },
-  reducer: (state, action) => {
+  reducer: (raw, action) => {
     const { player, score } = action.params;
-    const { players } = state;
-
-    const editedPlayers = _.map(players, pl => (
-      (pl.id != player) ? pl : _.assign({}, pl, { finalScore: score })
-    ));
-    return _.merge({}, state, { players: editedPlayers });
+    return _.merge({}, raw, { entities: { players: { [player]: { finalScore: score } } } });
   }
 };
 

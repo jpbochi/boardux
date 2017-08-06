@@ -6,18 +6,13 @@ const recorder = require('../support/recorder');
 describe('tic-tac-toe', () => {
   const newGame = (...extra) => gameMachine([...extra, core, ttt]).init();
 
-  it('inits blank board with player:X starting', () => {
+  it('inits blank board with player:x starting', () => {
     return newGame().then(game => {
-      expect(game.state()).eql({
+      expect(game.state().denormalized()).shallowDeepEqual({
         players: [ { id: 'player:x' }, { id: 'player:o' } ],
-        currentPlayerId: 'player:x',
+        currentPlayer: { id: 'player:x' },
         board: {
-          tiles: [
-            'a1', 'a2', 'a3',
-            'b1', 'b2', 'b3',
-            'c1', 'c2', 'c3'
-          ],
-          pieces: []
+          pieces: [ { id: 'x' }, { id: 'o' } ]
         }
       });
     });

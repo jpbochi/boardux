@@ -3,10 +3,10 @@ const { sendAction, ensureEndResponse } = require('../lib/utils');
 
 const namespace = 'core';
 
-const passTurnAction = {
-  type: `${namespace}:pass-turn`,
+const cycleTurnAction = {
+  type: `${namespace}:cycle-turn`,
   addRoutes: router => {
-    router.use('/pass-turn', ensureEndResponse(sendAction(passTurnAction)));
+    router.use('/cycle-turn', ensureEndResponse(sendAction(cycleTurnAction)));
   },
   reducer: (state, action) => {
     const { players, currentPlayerId } = state;
@@ -53,7 +53,7 @@ const core = {
   namespace,
   dependencies: [],
   actions: [
-    passTurnAction,
+    cycleTurnAction,
     addPieceAction,
     setFinalScoreAction,
   ]

@@ -24,7 +24,7 @@ describe('tic-tac-toe', () => {
   });
 
   describe('/place', () => {
-    it('adds piece to board and passes turn', () => {
+    it('adds piece to board and cycles turn', () => {
       const rec = recorder();
       return newGame(rec).then(game => (
         game.move('/place/x/b2')
@@ -33,7 +33,7 @@ describe('tic-tac-toe', () => {
           { type: 'tic-tac-toe:init', url: '/init', params: {} },
           { type: 'tic-tac-toe:place', url: '/place/x/b2', params: { piece: 'x', position: 'b2' } },
           { type: 'core:add', url: '/add/x/b2', params: { piece: 'x', position: 'b2' } },
-          { type: 'core:pass-turn', url: '/pass-turn', params: {} },
+          { type: 'core:cycle-turn', url: '/cycle-turn', params: {} },
           { type: 'tic-tac-toe:score', url: '/score', params: {} }
         ]);
       });

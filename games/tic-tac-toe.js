@@ -31,7 +31,7 @@ const placeAction = {
       const { piece, position } = req.params;
       return sendAction(placeAction)(req, res)
         .then(() => res.redirect(`/add/${piece}/${position}`))
-        .then(() => res.redirect('/pass-turn'))
+        .then(() => res.redirect('/cycle-turn'))
         .then(() => res.redirect('/score'));
     }));
   }

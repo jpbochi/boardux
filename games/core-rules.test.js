@@ -4,7 +4,7 @@ const gameMachine = require('../lib/game-machine');
 describe('core-rules', () => {
   const newGame = (state, ...extra) => Promise.resolve(gameMachine([core, ...extra], state));
 
-  describe('/pass-turn', () => {
+  describe('/cycle-turn', () => {
     it('passes turn from second to third', () => {
       return newGame({
         players: [
@@ -12,7 +12,7 @@ describe('core-rules', () => {
         ],
         currentPlayerId: 'player:two'
       }).then(game => (
-        game.move('/pass-turn')
+        game.move('/cycle-turn')
       )).then(game => {
         expect(game.state()).deep.property('currentPlayerId', 'player:three');
       });
@@ -25,7 +25,7 @@ describe('core-rules', () => {
         ],
         currentPlayerId: 'player:last'
       }).then(game => (
-        game.move('/pass-turn')
+        game.move('/cycle-turn')
       )).then(game => {
         expect(game.state()).deep.property('currentPlayerId', 'player:one');
       });
@@ -38,7 +38,7 @@ describe('core-rules', () => {
         ],
         currentPlayerId: 'player:last'
       }).then(game => (
-        game.move('/pass-turn')
+        game.move('/cycle-turn')
       )).then(game => {
         expect(game.state()).deep.property('currentPlayerId', 'player:two');
       });

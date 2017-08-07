@@ -75,6 +75,22 @@ describe('tic-tac-toe', () => {
       ));
     });
 
+    it('/place/an-invalid-piece/...', () => {
+      return newGame().then(game => (
+        expect(
+          game.move('/move/place/Y/a1', game.userForPlayer('player:x'))
+        ).rejected(err => expect(err.toString()).match(/^Forbidden/, err.stack))
+      ));
+    });
+
+    it('/place/.../an-invalid-tile', () => {
+      return newGame().then(game => (
+        expect(
+          game.move('/move/place/Y/a1', game.userForPlayer('player:x'))
+        ).rejected(err => expect(err.toString()).match(/^Forbidden/, err.stack))
+      ));
+    });
+
     it('adds piece to board and cycles turn', () => {
       const rec = recorder();
       return newGame(rec).then(game => (
@@ -89,8 +105,8 @@ describe('tic-tac-toe', () => {
         ]);
         expect(rec.actions()).eql([
           ['tic-tac-toe:init', {}],
-          ['tic-tac-toe:place', { piece: 'x', position: 'b2' }],
-          ['core:add', { piece: 'x', position: 'b2' }],
+          ['tic-tac-toe:place', { piece: 'x', tile: 'b2' }],
+          ['core:add', { piece: 'x', tile: 'b2' }],
           ['core:cycle-turn', {}],
           ['tic-tac-toe:score', {}]
         ]);

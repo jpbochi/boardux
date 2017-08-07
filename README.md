@@ -27,6 +27,7 @@
 
 - [x] list available moves
 - [x] authorise moves
-- [ ] reject /place/invalid-piece/a1
-- [ ] reject /place/x/invalid-position
+- [x] reject /place/an-invalid-piece/a1
+- [x] reject /place/x/an-invalid-position
+- [ ] reject /place/x/an-occupied-position
 - [ ] /score

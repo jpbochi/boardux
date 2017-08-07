@@ -35,13 +35,13 @@ const initAction = {
 };
 const placeAction = {
   type: `${namespace}:place`,
-  link: ({ piece, position }) => `/move/place/${piece}/${position}`,
+  link: ({ piece, tile }) => `/move/place/${piece}/${tile}`,
   addRoutes: router => {
-    router.post('/move/place/:piece/:position', ensureEnd((req, res) => {
-      const { piece, position } = req.params;
+    router.post('/move/place/:piece/:tile', ensureEnd((req, res) => {
+      const { piece, tile } = req.params;
       const { game } = req;
       return res.execute(req.toAction(placeAction))
-        .then(() => game.move(`/add/${piece}/${position}`))
+        .then(() => game.move(`/add/${piece}/${tile}`))
         .then(() => game.move('/cycle-turn'))
         .then(() => game.move('/score'));
     }));
@@ -75,8 +75,8 @@ module.exports = {
         const piece = blueprintPieceIdFromPlayerId[currentPlayer];
         return res.send(
           state.tiles()
-            .filter(position => !state.piece(position))
-            .map(position => placeAction.link({ piece, position }))
+            .filter(tile => !state.piece(tile))
+            .map(tile => placeAction.link({ piece, tile }))
         );
       }));
 

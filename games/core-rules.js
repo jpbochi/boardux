@@ -24,12 +24,21 @@ const cycleTurnAction = {
 const addPieceAction = {
   type: `${namespace}:add`,
   addRoutes: router => {
-    router.post('/add/:piece/:position', ensureEnd(execute(addPieceAction)));
+    router.post('/add/:piece/:tile',
+      (req, res, next) => {
+        const { piece, tile } = req.params;
+        const state = req.state();
+        if (!state.piece(piece)) { return res.sendError('Forbidden', `piece \`${piece}\` not found`); }
+        if (!state.tile(tile)) { return res.sendError('Forbidden', `tile \`${piece}\` not found`); }
+        next();
+      },
+      ensureEnd(execute(addPieceAction))
+    );
   },
   reducer: (raw, action) => {
-    const { piece, position } = action.params;
+    const { piece, tile } = action.params;
     const state = gameState(raw);
-    const blueprint = state.piece(piece).set('id', position);
+    const blueprint = state.piece(piece).set('id', tile);
     return state.updateEntities(en =>
       en.setIn(['pieces', blueprint.id], blueprint)
         .updateIn(['boards', 'main', 'pieces'], pieces => [...pieces, blueprint.id])

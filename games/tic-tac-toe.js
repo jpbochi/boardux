@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const core = require('./core-rules');
 const { requireAuthentication, requireCurrentPlayer, execute, ensureEnd } = require('../lib/route-utils');
 const { normalize } = require('../lib/game-state');
@@ -26,6 +27,23 @@ const blueprintPieceIdFromPlayerId = {
 };
 
 const namespace = 'tic-tac-toe';
+
+const referee = {
+  isMoveAvailable: (url, state, user) => {
+    return _.includes(referee.getMoves(state, user), url);
+  },
+  getMoves: (state, user) => {
+    const currentPlayer = state.currentPlayerId();
+
+    if (!user.canPlayAs(currentPlayer)) { return []; }
+
+    const piece = blueprintPieceIdFromPlayerId[currentPlayer];
+    return state.tiles()
+      .filter(tile => !state.piece(tile))
+      .map(tile => placeAction.link({ piece, tile }));
+  }
+};
+
 const initAction = {
   type: `${namespace}:init`,
   addRoutes: router => {
@@ -65,21 +83,12 @@ module.exports = {
   addRoutes: router => {
     router.route('/moves')
       .all(requireAuthentication)
-      .get(ensureEnd((req, res) => {
-        const { user } = req;
-        const state = req.state();
-        const currentPlayer = state.currentPlayerId();
-
-        if (!user.canPlayAs(currentPlayer)) { return res.send([]); }
-
-        const piece = blueprintPieceIdFromPlayerId[currentPlayer];
-        return res.send(
-          state.tiles()
-            .filter(tile => !state.piece(tile))
-            .map(tile => placeAction.link({ piece, tile }))
-        );
-      }));
-
-    router.all('/move/*', requireCurrentPlayer);
+      .get(ensureEnd((req, res) => res.send(referee.getMoves(req.state(), req.user))));
+    router.route('/move/*')
+      .all(requireAuthentication)
+      .all(requireCurrentPlayer)
+      .post((req, res, next) => (
+        referee.isMoveAvailable(req.url, req.state(), req.user) ? next() : res.sendError('Forbidden')
+      ));
   }
 };

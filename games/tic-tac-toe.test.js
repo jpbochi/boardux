@@ -75,7 +75,7 @@ describe('tic-tac-toe', () => {
       ));
     });
 
-    it('/place/an-invalid-piece/...', () => {
+    it('rejects /place/an-invalid-piece/...', () => {
       return newGame().then(game => (
         expect(
           game.move('/move/place/Y/a1', game.userForPlayer('player:x'))
@@ -83,10 +83,21 @@ describe('tic-tac-toe', () => {
       ));
     });
 
-    it('/place/.../an-invalid-tile', () => {
+    it(' rejects /place/.../an-invalid-tile', () => {
       return newGame().then(game => (
         expect(
           game.move('/move/place/Y/a1', game.userForPlayer('player:x'))
+        ).rejected(err => expect(err.toString()).match(/^Forbidden/, err.stack))
+      ));
+    });
+
+    it('rejects /place/.../an-occupied-tile', () => {
+      const rec = recorder();
+      return newGame(rec).then(game => (
+        game.move('/move/place/x/c3', game.userForPlayer('player:x'))
+      )).then(game => (
+        expect(
+          game.move('/move/place/o/c3', game.userForPlayer('player:o'))
         ).rejected(err => expect(err.toString()).match(/^Forbidden/, err.stack))
       ));
     });

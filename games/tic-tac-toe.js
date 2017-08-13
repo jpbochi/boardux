@@ -71,11 +71,27 @@ const scoreAction = {
     router.post('/score', ensureEnd((req, res) => {
       const state = req.state();
       const { game } = req;
+      const playerIds = _.map(state.players(), 'id');
 
-      if (state.piece('a1') && state.piece('b2') && state.piece('c3')) {
-        return game.move('/set-final-score/player:x/won')
-          .then(() => game.move('/set-final-score/player:o/lost'))
-          .then(() => game.move('/set-game-over'));
+      const winningLines = [
+        ['a1', 'a2', 'a3'], ['b1', 'b2', 'b3'], ['c1', 'c2', 'c3'],
+        ['a1', 'b1', 'c1'], ['a2', 'b2', 'c2'], ['a3', 'b3', 'c3'],
+        ['a1', 'b2', 'c3'],
+        ['c1', 'b2', 'a3']
+      ];
+      const winner = _.find(playerIds, playerId => (
+        _.find(winningLines, line => (
+          _.every(line, tile => (
+            _.get(state.piece(tile), 'ensign') === playerId
+          ))
+        ))
+      ));
+
+      if (winner) {
+        return game.move(`/set-final-score/${winner}/won`)
+          .then(() => _.find(playerIds, id => id != winner))
+          .then(loser => game.move(`/set-final-score/${loser}/lost`))
+          .then(loser => game.move('/set-game-over'));
       }
       return res.send();
     }));

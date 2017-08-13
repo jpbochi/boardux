@@ -128,6 +128,7 @@ describe('tic-tac-toe', () => {
     it('does nothing while game is not over', () => {
       const rec = recorder();
       return newGame(rec)
+        .then(game => game.moveInSeq(['/add/x/a1', '/add/o/b2', '/add/x/c3']))
         .then(game => rec.reset() || game.move('/score'))
         .then(game => {
           expect(rec.requests()).eql([
@@ -139,15 +140,28 @@ describe('tic-tac-toe', () => {
     it('player X wins on diagonal', () => {
       const rec = recorder();
       return newGame(rec)
-        .then(game => game.move('/add/x/a1'))
-        .then(game => game.move('/add/x/c3'))
-        .then(game => game.move('/add/x/b2'))
+        .then(game => game.moveInSeq(['/add/x/a1', '/add/x/b2', '/add/x/c3']))
         .then(game => rec.reset() || game.move('/score'))
         .then(game => {
           expect(rec.requests()).eql([
             'POST /score',
             'POST /set-final-score/player:x/won',
             'POST /set-final-score/player:o/lost',
+            'POST /set-game-over'
+          ]);
+        });
+    });
+
+    it('player O wins on other diagonal', () => {
+      const rec = recorder();
+      return newGame(rec)
+        .then(game => game.moveInSeq(['/add/o/c1', '/add/o/b2', '/add/o/a3']))
+        .then(game => rec.reset() || game.move('/score'))
+        .then(game => {
+          expect(rec.requests()).eql([
+            'POST /score',
+            'POST /set-final-score/player:o/won',
+            'POST /set-final-score/player:x/lost',
             'POST /set-game-over'
           ]);
         });

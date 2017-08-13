@@ -68,7 +68,17 @@ const placeAction = {
 const scoreAction = {
   type: `${namespace}:score`,
   addRoutes: router => {
-    router.post('/score', ensureEnd(execute(scoreAction)));
+    router.post('/score', ensureEnd((req, res) => {
+      const state = req.state();
+      const { game } = req;
+
+      if (state.piece('a1') && state.piece('b2') && state.piece('c3')) {
+        return game.move('/set-final-score/player:x/won')
+          .then(() => game.move('/set-final-score/player:o/lost'))
+          .then(() => game.move('/set-game-over'));
+      }
+      return res.send();
+    }));
   }
 };
 

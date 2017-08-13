@@ -118,8 +118,7 @@ describe('tic-tac-toe', () => {
           ['tic-tac-toe:init', {}],
           ['tic-tac-toe:place', { piece: 'x', tile: 'b2' }],
           ['core:add', { piece: 'x', tile: 'b2' }],
-          ['core:cycle-turn', {}],
-          ['tic-tac-toe:score', {}]
+          ['core:cycle-turn', {}]
         ]);
       });
     });
@@ -133,6 +132,23 @@ describe('tic-tac-toe', () => {
         .then(game => {
           expect(rec.requests()).eql([
             'POST /score'
+          ]);
+        });
+    });
+
+    it('player X wins on diagonal', () => {
+      const rec = recorder();
+      return newGame(rec)
+        .then(game => game.move('/add/x/a1'))
+        .then(game => game.move('/add/x/c3'))
+        .then(game => game.move('/add/x/b2'))
+        .then(game => rec.reset() || game.move('/score'))
+        .then(game => {
+          expect(rec.requests()).eql([
+            'POST /score',
+            'POST /set-final-score/player:x/won',
+            'POST /set-final-score/player:o/lost',
+            'POST /set-game-over'
           ]);
         });
     });

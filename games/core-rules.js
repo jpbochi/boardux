@@ -55,6 +55,13 @@ const setFinalScoreAction = {
     return gameState(state).updatePlayer(player, p => p.set('finalScore', score));
   }
 };
+const setGameOverAction = {
+  type: `${namespace}:set-game-over`,
+  addRoutes: router => {
+    router.post('/set-game-over', ensureEnd(execute(setGameOverAction)));
+  }
+  // TODO: reducer: set no current player and game-over flag
+};
 
 const core = {
   namespace,
@@ -63,6 +70,7 @@ const core = {
     cycleTurnAction,
     addPieceAction,
     setFinalScoreAction,
+    setGameOverAction
   ]
 };
 

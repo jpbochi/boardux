@@ -124,4 +124,17 @@ describe('tic-tac-toe', () => {
       });
     });
   });
+
+  describe('/score', () => {
+    it('does nothing while game is not over', () => {
+      const rec = recorder();
+      return newGame(rec)
+        .then(game => rec.reset() || game.move('/score'))
+        .then(game => {
+          expect(rec.requests()).eql([
+            'POST /score'
+          ]);
+        });
+    });
+  });
 });

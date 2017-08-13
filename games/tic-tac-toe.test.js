@@ -166,5 +166,24 @@ describe('tic-tac-toe', () => {
           ]);
         });
     });
+
+    it('draws if board is full and no player won', () => {
+      const rec = recorder();
+      return newGame(rec)
+        .then(game => game.moveInSeq([
+          '/add/x/a1', '/add/o/a2', '/add/x/a3',
+          '/add/o/b1', '/add/o/b2', '/add/x/b3',
+          '/add/x/c1', '/add/x/c2', '/add/o/c3'
+        ]))
+        .then(game => rec.reset() || game.move('/score'))
+        .then(game => {
+          expect(rec.requests()).eql([
+            'POST /score',
+            'POST /set-final-score/player:x/draw',
+            'POST /set-final-score/player:o/draw',
+            'POST /set-game-over'
+          ]);
+        });
+    });
   });
 });

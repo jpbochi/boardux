@@ -88,10 +88,20 @@ const scoreAction = {
       ));
 
       if (winner) {
-        return game.move(`/set-final-score/${winner}/won`)
-          .then(() => _.find(playerIds, id => id != winner))
-          .then(loser => game.move(`/set-final-score/${loser}/lost`))
-          .then(loser => game.move('/set-game-over'));
+        const loser = _.find(playerIds, id => id != winner);
+        return game.moveInSeq([
+          `/set-final-score/${winner}/won`,
+          `/set-final-score/${loser}/lost`,
+          '/set-game-over'
+        ]);
+      }
+      const isBoardFull = _.every(state.tiles(), tile => state.piece(tile));
+      if (isBoardFull) {
+        return game.moveInSeq([
+          '/set-final-score/player:x/draw',
+          '/set-final-score/player:o/draw',
+          '/set-game-over'
+        ]);
       }
       return res.send();
     }));

@@ -38,10 +38,11 @@ const addPieceAction = {
   reducer: (raw, action) => {
     const { piece, tile } = action.params;
     const state = gameState(raw);
-    const blueprint = state.piece(piece).set('id', tile);
+    const newPieceId = tile;
+    const newPiece = state.piece(piece).set('id', newPieceId);
     return state.updateEntities(en =>
-      en.setIn(['pieces', blueprint.id], blueprint)
-        .updateIn(['boards', 'main', 'pieces'], pieces => [...pieces, blueprint.id])
+      en.setIn(['pieces', newPieceId], newPiece)
+        .updateIn(['boards', 'main', 'pieces'], pieces => [...pieces, newPieceId])
     );
   }
 };

@@ -64,6 +64,23 @@ describe('core-rules', () => {
             ]
           }
         });
+        expect(game.state().normalized()).eql({
+          entities: {
+            boards: {
+              main: {
+                pieces: ['stone', 'a2'],
+                tiles: ['a1', 'a2', 'b1', 'b2']
+              }
+            },
+            pieces: {
+              a2: { color: 'white', id: 'a2' },
+              stone: { color: 'white', id: 'stone' }
+            }
+          },
+          result: {
+            board: 'main'
+          }
+        });
       });
     });
   });

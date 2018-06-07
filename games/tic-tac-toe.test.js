@@ -15,6 +15,29 @@ describe('tic-tac-toe', () => {
           pieces: [ { id: 'x' }, { id: 'o' } ]
         }
       });
+      expect(game.state().normalized()).to.eql({
+        entities: {
+          boards: {
+            main: {
+              pieces: ['x', 'o'],
+              tiles: ['a1', 'a2', 'a3', 'b1', 'b2', 'b3', 'c1', 'c2', 'c3']
+            }
+          },
+          pieces: {
+            o: { ensign: 'player:o', id: 'o' },
+            x: { ensign: 'player:x', id: 'x' }
+          },
+          players: {
+            'player:o': { id: 'player:o' },
+            'player:x': { id: 'player:x' }
+          }
+        },
+        result: {
+          board: 'main',
+          currentPlayer: 'player:x',
+          players: ['player:x', 'player:o']
+        }
+      });
     });
   });
 

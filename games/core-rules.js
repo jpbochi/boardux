@@ -69,6 +69,9 @@ const setGameOverAction = {
 const core = {
   namespace,
   dependencies: [],
+  addRoutes: router => {
+    router.route('/moves').get(ensureEnd((req, res) => res.send(req.moves || [])));
+  },
   actions: [
     cycleTurnAction,
     addPieceAction,

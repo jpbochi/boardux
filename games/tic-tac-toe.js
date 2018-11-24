@@ -119,7 +119,10 @@ module.exports = {
   addRoutes: router => {
     router.route('/moves')
       .all(requireAuthentication)
-      .get(ensureEnd((req, res) => res.send(referee.getMoves(req.state(), req.user))));
+      .get((req, res, next) => {
+        req.moves = _.concat(req.moves || [], referee.getMoves(req.state(), req.user));
+        return next();
+      });
     router.route('/move/*')
       .all(requireAuthentication)
       .all(requireCurrentPlayer)

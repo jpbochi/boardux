@@ -11,7 +11,7 @@
 ### engine
 
 - [ ] introduce referee concept (_authorises_ moves and _lists_ available moves)
-- [ ] allow for multiple referees to handle GET /moves and each one add their own move links
+- [x] allow for multiple referees to handle GET /moves and each one add their own move links
 - [ ] GET view of the game for a given player
 - [ ] include available moves in game view
 - [ ] ensure every single move is properly authorised

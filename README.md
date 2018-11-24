@@ -4,10 +4,14 @@
 
 ## TODO
 
+### UI
+
+- [ ] CLI
+
 ### engine
 
 - [ ] introduce referee concept (_authorises_ moves and _lists_ available moves)
-- [ ] allow for multiple referees to handle GET /moves and each one add their own move links
+- [x] allow for multiple referees to handle GET /moves and each one add their own move links
 - [ ] GET view of the game for a given player
 - [ ] include available moves in game view
 - [ ] ensure every single move is properly authorised
@@ -30,4 +34,5 @@
 - [x] reject /place/an-invalid-piece/a1
 - [x] reject /place/x/an-invalid-position
 - [x] reject /place/x/an-occupied-position
-- [ ] /score
+- [x] /score
+- [ ] don't return moves when game is over

@@ -60,13 +60,29 @@ const setGameOverAction = {
   type: `${namespace}:set-game-over`,
   addRoutes: router => {
     router.post('/set-game-over', ensureEnd(execute(setGameOverAction)));
+  },
+  reducer: (raw, action) => {
+    return gameState(raw).updateGame(game => game.set('currentPlayer', null));
   }
-  // TODO: reducer: set no current player and game-over flag
 };
 
 const core = {
   namespace,
   dependencies: [],
+  addRoutes: router => {
+    router.route('/moves').get(ensureEnd((req, res) => res.send(req.moves || [])));
+    router.route('/score').post(ensureEnd((req, res) => {
+      const state = req.state();
+      const playersLeft = _.filter(state.players(), player => !player.finalScore);
+      if (playersLeft.length === 1) {
+        return req.game.moveInSeq([
+          `/set-final-score/${playersLeft[0].id}/won`,
+          '/set-game-over'
+        ]);
+      }
+      return res.send();
+    }));
+  },
   actions: [
     cycleTurnAction,
     addPieceAction,

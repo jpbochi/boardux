@@ -4,7 +4,7 @@ const gameMachine = require('../lib/game-machine');
 const recorder = require('../support/recorder');
 
 describe('tic-tac-toe', () => {
-  const newGame = (...extra) => gameMachine([...extra, core, ttt]).init();
+  const newGame = (...extra) => gameMachine([...extra, ttt, core]).init();
 
   it('inits blank board with player:x starting', () => {
     return newGame().then(game => {
@@ -106,7 +106,7 @@ describe('tic-tac-toe', () => {
       ));
     });
 
-    it(' rejects /place/.../an-invalid-tile', () => {
+    it('rejects /place/.../an-invalid-tile', () => {
       return newGame().then(game => (
         expect(
           game.move('/move/place/Y/a1', game.userForPlayer('player:x'))
@@ -115,8 +115,7 @@ describe('tic-tac-toe', () => {
     });
 
     it('rejects /place/.../an-occupied-tile', () => {
-      const rec = recorder();
-      return newGame(rec).then(game => (
+      return newGame().then(game => (
         game.move('/move/place/x/c3', game.userForPlayer('player:x'))
       )).then(game => (
         expect(

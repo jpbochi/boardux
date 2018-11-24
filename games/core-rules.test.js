@@ -1,8 +1,9 @@
 const core = require('./core-rules');
 const gameMachine = require('../lib/game-machine');
+const recorder = require('../support/recorder');
 
 describe('core-rules', () => {
-  const newGame = (state, ...extra) => Promise.resolve(gameMachine([core, ...extra], state));
+  const newGame = (state, ...extra) => Promise.resolve(gameMachine([...extra, core], state));
 
   describe('/cycle-turn', () => {
     it('passes turn from second to third', () => {
@@ -99,6 +100,41 @@ describe('core-rules', () => {
           { id: 'player:two' }
         ]);
       });
+    });
+  });
+
+  describe('/set-game-over', () => {
+    it('sets no current player and game-over flag', () => {
+      return newGame({
+        players: [
+          { id: 'player:one' }, { id: 'player:two' }
+        ],
+        currentPlayer: 'player:one'
+      }).then(game => (
+        game.move('/set-game-over')
+      )).then(game => {
+        expect(game.state().currentPlayerId()).eql(null);
+        expect(game.state().isGameOver()).eql(true);
+      });
+    });
+  });
+
+  describe('/score', () => {
+    it('ends game if the other player has a final score', () => {
+      const rec = recorder();
+      return newGame({
+        players: [ { id: 'player:one' }, { id: 'player:two' } ],
+        currentPlayer: 'player:one'
+      }, rec)
+        .then(game => game.move('/set-final-score/player:one/ragequit'))
+        .then(game => rec.reset() || game.move('/score'))
+        .then(game => {
+          expect(rec.requests()).eql([
+            'POST /score',
+            'POST /set-final-score/player:two/won',
+            'POST /set-game-over'
+          ]);
+        });
     });
   });
 });

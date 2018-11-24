@@ -58,7 +58,7 @@ const placeAction = {
     router.post('/move/place/:piece/:tile', ensureEnd((req, res) => {
       const { piece, tile } = req.params;
       const { game } = req;
-      return res.execute(req.toAction(placeAction))
+      return res.execute(req.toAction(placeAction)) // TODO: do we need to execute placeAction? I has no reducers!
         .then(() => game.move(`/add/${piece}/${tile}`))
         .then(() => game.move('/cycle-turn'))
         .then(() => game.move('/score'));
@@ -68,7 +68,7 @@ const placeAction = {
 const scoreAction = {
   type: `${namespace}:score`,
   addRoutes: router => {
-    router.post('/score', ensureEnd((req, res) => {
+    router.post('/score', (req, res, next) => {
       const state = req.state();
       const { game } = req;
       const playerIds = _.map(state.players(), 'id');
@@ -93,7 +93,7 @@ const scoreAction = {
           `/set-final-score/${winner}/won`,
           `/set-final-score/${loser}/lost`,
           '/set-game-over'
-        ]);
+        ]).then(res.end, next);
       }
       const isBoardFull = _.every(state.tiles(), tile => state.piece(tile));
       if (isBoardFull) {
@@ -101,10 +101,10 @@ const scoreAction = {
           '/set-final-score/player:x/draw',
           '/set-final-score/player:o/draw',
           '/set-game-over'
-        ]);
+        ]).then(res.end, next);
       }
-      return res.send();
-    }));
+      return next();
+    });
   }
 };
 
@@ -119,7 +119,10 @@ module.exports = {
   addRoutes: router => {
     router.route('/moves')
       .all(requireAuthentication)
-      .get(ensureEnd((req, res) => res.send(referee.getMoves(req.state(), req.user))));
+      .get((req, res, next) => {
+        req.moves = _.concat(req.moves || [], referee.getMoves(req.state(), req.user));
+        return next();
+      });
     router.route('/move/*')
       .all(requireAuthentication)
       .all(requireCurrentPlayer)

@@ -2,7 +2,7 @@ const core = require('./core-rules');
 const gameMachine = require('../lib/game-machine');
 
 describe('core-rules', () => {
-  const newGame = (state, ...extra) => Promise.resolve(gameMachine([core, ...extra], state));
+  const newGame = (state, ...extra) => Promise.resolve(gameMachine([...extra, core], state));
 
   describe('/cycle-turn', () => {
     it('passes turn from second to third', () => {

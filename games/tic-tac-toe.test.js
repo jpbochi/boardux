@@ -4,7 +4,7 @@ const gameMachine = require('../lib/game-machine');
 const recorder = require('../support/recorder');
 
 describe('tic-tac-toe', () => {
-  const newGame = (...extra) => gameMachine([...extra, core, ttt]).init();
+  const newGame = (...extra) => gameMachine([...extra, ttt, core]).init();
 
   it('inits blank board with player:x starting', () => {
     return newGame().then(game => {

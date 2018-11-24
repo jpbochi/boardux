@@ -106,7 +106,7 @@ describe('tic-tac-toe', () => {
       ));
     });
 
-    it(' rejects /place/.../an-invalid-tile', () => {
+    it('rejects /place/.../an-invalid-tile', () => {
       return newGame().then(game => (
         expect(
           game.move('/move/place/Y/a1', game.userForPlayer('player:x'))

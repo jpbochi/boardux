@@ -101,4 +101,20 @@ describe('core-rules', () => {
       });
     });
   });
+
+  describe('/set-game-over', () => {
+    it('sets no current player and game-over flag', () => {
+      return newGame({
+        players: [
+          { id: 'player:one' }, { id: 'player:two' }
+        ],
+        currentPlayer: 'player:one'
+      }).then(game => (
+        game.move('/set-game-over')
+      )).then(game => {
+        expect(game.state().currentPlayerId()).eql(null);
+        expect(game.state().isGameOver()).eql(true);
+      });
+    });
+  });
 });

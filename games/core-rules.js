@@ -60,8 +60,10 @@ const setGameOverAction = {
   type: `${namespace}:set-game-over`,
   addRoutes: router => {
     router.post('/set-game-over', ensureEnd(execute(setGameOverAction)));
+  },
+  reducer: (raw, action) => {
+    return gameState(raw).updateGame(game => game.set('currentPlayer', null));
   }
-  // TODO: reducer: set no current player and game-over flag
 };
 
 const core = {

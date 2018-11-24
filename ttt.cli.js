@@ -38,8 +38,7 @@ const loop = (game) => {
     showGameState(state);
     showGameScore(state);
 
-    rl.close();
-    return;
+    return readline.clearScreenDown(process.stdin);
   }
 
   showGameState(state);
@@ -49,16 +48,21 @@ const loop = (game) => {
   return game.get('/moves', game.userForPlayer(currentPlayer)).then(moves => {
     moves.forEach((x, i) => console.log(i, x));
 
-    return rl.question(`[${currentPlayer}] what is your move? `, (answer) => {
-      readline.moveCursor(process.stdin, 0, -6 - moves.length);
-      readline.clearScreenDown(process.stdin);
-      const nextMove = moves[answer];
-      return game.move(nextMove, game.userForPlayer(currentPlayer)).then(loop);
-    });
+    readline.clearScreenDown(process.stdin);
+    return new Promise(resolve => {
+      rl.question(`[${currentPlayer}] what is your move? `, (answer) => {
+        resolve(moves[answer] || '/?');
+      });
+    }).then(chosenMove => (
+      game.move(chosenMove, game.userForPlayer(currentPlayer)).then(game => {
+        readline.moveCursor(process.stdin, 0, -6 - moves.length);
+        return loop(game);
+      })
+    ));
   });
 };
 
-gameMachine([core, ttt]).init()
+gameMachine([ttt, core]).init()
   .then(loop)
-  // .then(() => rl.close())
+  .then(() => rl.close())
   .catch(err => console.error(err) || rl.close());

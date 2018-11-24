@@ -115,8 +115,7 @@ describe('tic-tac-toe', () => {
     });
 
     it('rejects /place/.../an-occupied-tile', () => {
-      const rec = recorder();
-      return newGame(rec).then(game => (
+      return newGame().then(game => (
         game.move('/move/place/x/c3', game.userForPlayer('player:x'))
       )).then(game => (
         expect(

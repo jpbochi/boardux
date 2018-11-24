@@ -58,7 +58,7 @@ const placeAction = {
     router.post('/move/place/:piece/:tile', ensureEnd((req, res) => {
       const { piece, tile } = req.params;
       const { game } = req;
-      return res.execute(req.toAction(placeAction))
+      return res.execute(req.toAction(placeAction)) // TODO: do we need to execute placeAction? I has no reducers!
         .then(() => game.move(`/add/${piece}/${tile}`))
         .then(() => game.move('/cycle-turn'))
         .then(() => game.move('/score'));

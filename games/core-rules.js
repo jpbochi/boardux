@@ -71,6 +71,7 @@ const core = {
   dependencies: [],
   addRoutes: router => {
     router.route('/moves').get(ensureEnd((req, res) => res.send(req.moves || [])));
+    router.route('/score').post(ensureEnd((req, res) => res.send()));
   },
   actions: [
     cycleTurnAction,

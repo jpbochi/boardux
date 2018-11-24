@@ -51,7 +51,7 @@ const loop = (game) => {
     readline.clearScreenDown(process.stdin);
     return new Promise(resolve => {
       rl.question(`[${currentPlayer}] what is your move? `, (answer) => {
-        resolve(moves[answer] || '/?');
+        resolve(moves[answer] || answer);
       });
     }).then(chosenMove => (
       game.move(chosenMove, game.userForPlayer(currentPlayer)).then(game => {

@@ -7,6 +7,7 @@
 ### UI
 
 - [x] CLI
+- [ ] isometric tic-tac-toe web UI (depends on an http server)
 
 ### engine & core
 
@@ -19,6 +20,7 @@
 
 ### games
 
+- [ ] https://en.wikipedia.org/wiki/Go_(game)
 - [ ] "Resta Um" (patience games break the "last player wins" rule in core/score)
 - [ ] a partial information game like Stratego
 - [ ] a stochastic game (ie, has dice of other random factors): Backgammon

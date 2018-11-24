@@ -4,6 +4,10 @@
 
 ## TODO
 
+### UI
+
+- [ ] CLI
+
 ### engine
 
 - [ ] introduce referee concept (_authorises_ moves and _lists_ available moves)
@@ -30,4 +34,5 @@
 - [x] reject /place/an-invalid-piece/a1
 - [x] reject /place/x/an-invalid-position
 - [x] reject /place/x/an-occupied-position
-- [ ] /score
+- [x] /score
+- [ ] don't return moves when game is over

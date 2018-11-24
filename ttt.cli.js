@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 /* eslint no-console :0 */
 const readline = require('readline');
+const resign = require('./games/resign');
 const ttt = require('./games/tic-tac-toe');
 const core = require('./games/core-rules');
 const gameMachine = require('./lib/game-machine');
@@ -62,7 +63,7 @@ const loop = (game) => {
   });
 };
 
-gameMachine([ttt, core]).init()
+gameMachine([resign, ttt, core]).init()
   .then(loop)
   .then(() => rl.close())
   .catch(err => console.error(err) || rl.close());

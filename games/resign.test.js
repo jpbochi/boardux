@@ -10,7 +10,7 @@ describe('resign', () => {
     it('sets player score to resign', () => {
       const rec = recorder();
       return newGame({
-        players: [ { id: 'player:one' }, { id: 'player:two' } ],
+        players: [ { id: 'player:one' }, { id: 'player:two' }, { id: 'player:otter' } ],
         currentPlayer: 'player:one'
       }, rec).then(game => (
         game.move('/resign', game.userForPlayer('player:two'))

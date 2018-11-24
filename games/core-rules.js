@@ -71,7 +71,17 @@ const core = {
   dependencies: [],
   addRoutes: router => {
     router.route('/moves').get(ensureEnd((req, res) => res.send(req.moves || [])));
-    router.route('/score').post(ensureEnd((req, res) => res.send()));
+    router.route('/score').post(ensureEnd((req, res) => {
+      const state = req.state();
+      const playersLeft = _.filter(state.players(), player => !player.finalScore);
+      if (playersLeft.length === 1) {
+        return req.game.moveInSeq([
+          `/set-final-score/${playersLeft[0].id}/won`,
+          '/set-game-over'
+        ]);
+      }
+      return res.send();
+    }));
   },
   actions: [
     cycleTurnAction,

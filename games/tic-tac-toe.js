@@ -68,7 +68,7 @@ const placeAction = {
 const scoreAction = {
   type: `${namespace}:score`,
   addRoutes: router => {
-    router.post('/score', ensureEnd((req, res) => {
+    router.post('/score', (req, res, next) => {
       const state = req.state();
       const { game } = req;
       const playerIds = _.map(state.players(), 'id');
@@ -93,7 +93,7 @@ const scoreAction = {
           `/set-final-score/${winner}/won`,
           `/set-final-score/${loser}/lost`,
           '/set-game-over'
-        ]);
+        ]).then(res.end, next);
       }
       const isBoardFull = _.every(state.tiles(), tile => state.piece(tile));
       if (isBoardFull) {
@@ -101,10 +101,10 @@ const scoreAction = {
           '/set-final-score/player:x/draw',
           '/set-final-score/player:o/draw',
           '/set-game-over'
-        ]);
+        ]).then(res.end, next);
       }
-      return res.send();
-    }));
+      return next();
+    });
   }
 };
 

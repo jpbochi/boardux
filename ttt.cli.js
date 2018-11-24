@@ -10,18 +10,39 @@ const rl = readline.createInterface({
   output: process.stdout
 });
 
+const showGameState = (state) => {
+  const display = [
+    ['a1', 'a2', 'a3'],
+    ['b1', 'b2', 'b3'],
+    ['c1', 'c2', 'c3']
+  ].map(r => (
+    r.map(tile => {
+      const piece = state.piece(tile);
+      if(piece) {
+        return piece.ensign.split(':')[1];
+      } else {
+        return ' ';
+      }
+    })
+  )).map(row => `${row.join(' | ')}`).join('\n---------\n');
+  console.log(display);
+};
+
+const showGameScore = (state) => {
+  console.log(state.denormalized().players);
+};
+
 const loop = (game) => {
   const state = game.state();
   if (state.isGameOver()) {
-    // print score
-    console.log(state.denormalized().players);
+    showGameState(state);
+    showGameScore(state);
 
     rl.close();
     return;
   }
 
-  // print game state
-  console.log(state.denormalized().board.pieces);
+  showGameState(state);
 
   // print available moves
   const currentPlayer = state.currentPlayerId();
@@ -29,6 +50,8 @@ const loop = (game) => {
     moves.forEach((x, i) => console.log(i, x));
 
     return rl.question(`[${currentPlayer}] what is your move? `, (answer) => {
+      readline.moveCursor(process.stdin, 0, -6 - moves.length);
+      readline.clearScreenDown(process.stdin);
       const nextMove = moves[answer];
       return game.move(nextMove, game.userForPlayer(currentPlayer)).then(loop);
     });

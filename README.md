@@ -6,25 +6,30 @@
 
 ### UI
 
-- [ ] CLI
+- [x] CLI
 
-### engine
+### engine & core
 
 - [ ] introduce referee concept (_authorises_ moves and _lists_ available moves)
 - [x] allow for multiple referees to handle GET /moves and each one add their own move links
 - [ ] GET view of the game for a given player
 - [ ] include available moves in game view
 - [ ] ensure every single move is properly authorised
+- [ ] consider replacing core:add with core:move & concept of "stash" pieces (outside of board)
 
-### games & extensions
+### games
 
-- [ ] resign move
-- [ ] draw offer
+- [ ] "Resta Um" (patience games break the "last player wins" rule in core/score)
 - [ ] a partial information game like Stratego
 - [ ] a stochastic game (ie, has dice of other random factors): Backgammon
 - [ ] a cooperative or team game
-- [ ] Chess and some Chess variant (see https://en.wikipedia.org/wiki/List_of_chess_variants)
 - [ ] Scrabble: partial info and stochastic (letters are picked randomly)
+- [ ] Chess and some Chess variant (see https://en.wikipedia.org/wiki/List_of_chess_variants)
+
+### extensions
+
+- [x] resign move
+- [ ] draw offer
 - [ ] standard game state formats like [X-FEN](https://en.wikipedia.org/wiki/X-FEN)
 
 ### tic-tac-toe

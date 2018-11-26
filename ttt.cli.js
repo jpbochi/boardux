@@ -63,7 +63,12 @@ const loop = (game) => {
   });
 };
 
-gameMachine([resign, ttt, core]).init()
+rl.on('SIGINT', () => {
+  console.log('^C');
+  rl.close();
+});
+
+return gameMachine([resign, ttt, core]).init()
   .then(loop)
   .then(() => rl.close())
   .catch(err => console.error(err) || rl.close());
